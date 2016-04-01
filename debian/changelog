@@ -1,7 +1,7 @@
-boogie (2.3.0.61016+dfsg+1.gbp64e8b3-1) experimental; urgency=medium
+boogie (2.3.0.61016+dfsg+1.gbp64e8b3-1) unstable; urgency=medium
 
   ** SNAPSHOT build @64e8b33656140b87137d0662d9e6835e004d13c2 **
 
   * Initial release.
 
- -- Benjamin Barenblat <bbaren@mit.edu>  Fri, 01 Apr 2016 12:47:14 -0400
+ -- Benjamin Barenblat <bbaren@mit.edu>  Fri, 01 Apr 2016 16:18:08 -0400
