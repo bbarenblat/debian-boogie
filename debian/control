@@ -11,10 +11,27 @@ Build-Depends-Indep:
 Standards-Version: 3.9.7
 Homepage: http://research.microsoft.com/en-us/projects/boogie/
 
+Package: boogie
+Architecture: all
+Depends:
+ libboogie-cil (= ${binary:Version}),
+ mono-mcs,
+ z3,
+ ${cli:Depends},
+ ${misc:Depends}
+Description: verifiable programming language (compiler)
+ Boogie is a compiler intermediate language with support for automatic invariant
+ checking using an SMT solver such as Z3.  It supports program verification for
+ a variety of other, higher-level languages, including Spec\#, C, Dafny, and
+ Chalice.
+ .
+ This package contains the Boogie compiler, as well as bvd, the Boogie
+ Verification Debugger.
+
 Package: libboogie-cil
 Architecture: all
 Depends: ${cli:Depends}, ${misc:Depends}
-Description: verifiable programming language
+Description: verifiable programming language (library)
  Boogie is a compiler intermediate language with support for automatic invariant
  checking using an SMT solver such as Z3.  It supports program verification for
  a variety of other, higher-level languages, including Spec\#, C, Dafny, and

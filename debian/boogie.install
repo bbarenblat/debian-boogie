@@ -1,0 +1,4 @@
+Binaries/Boogie.exe usr/lib/boogie
+Binaries/BVD.exe usr/lib/boogie
+debian/bin/boogie usr/bin
+debian/bin/bvd usr/bin

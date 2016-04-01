@@ -1,1 +1,1 @@
-Binaries/*.dll /usr/lib/boogie
+Binaries/*.dll usr/lib/boogie

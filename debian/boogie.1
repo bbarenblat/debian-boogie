@@ -1,0 +1,715 @@
+.\" © 2013, 2015-2016 Benjamin Barenblat
+.\"
+.\" Licensed under the Apache License, Version 2.0 (the "License"); you may not
+.\" use this file except in compliance with the License.  You may obtain a copy
+.\" of the License at
+.\"
+.\"     http://www.apache.org/licenses/LICENSE-2.0
+.\"
+.\" Unless required by applicable law or agreed to in writing, software
+.\" distributed under the License is distributed on an "AS IS" BASIS, WITHOUT
+.\" WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.  See the
+.\" License for the specific language governing permissions and limitations
+.\" under the License.
+.pc
+.TH boogie 1 "2016-04-01" "Git snapshot 97628c" Boogie
+.SH NAME
+boogie \- compiler for the Boogie programming language
+.SH SYNOPSIS
+.B boogie
+.RI [\| options \|]
+.IR file.bpl \ .\|.\|.\&
+.SH DESCRIPTION
+.B boogie
+is a compiler for Microsoft Research's Boogie programming language, an imperative compiler intermediate language with built-in specification constructs.
+The integrated static analyzer can verify functional correctness as part of the compilation process.
+.SH OPTIONS
+.B boogie
+accepts a number of different types of options.
+.SS "File macros"
+A number of
+.B boogie
+options accept a
+.I file
+argument, which may contain the following macros:
+.TP
+.B @FILE@
+Expands to the last filename specified on the command line.
+.TP
+.B @PREFIX@
+Expands to the concatenation of strings given by
+.B /logPrefix
+options.
+.TP
+.B @TIME@
+Expands to the current time.
+.SS "General options"
+.TP
+.BI /env: n
+Control printing of command-line arguments.
+Accepted values for\ \fIn\fP are:
+.RS
+.TP
+.B 0
+Suppress printing of command-line arguments.
+.TP
+.B 1
+(default) Print command-line arguments during BPL print and prover log.
+.TP
+.B 2
+Print command-line arguments during BPL print and prover log, and also to standard output.
+.RE
+.TP
+.B /noLogo
+Suppress printing of the version number and copyright message.
+.TP
+.B /wait
+Wait for a carriage return from the keyboard before exiting.
+.TP
+.BI /xml: file
+Also produce output in XML format to
+.IR file .
+.SS "Boogie options"
+Multiple .bpl files supplied on the command line are concatenated into one Boogie program.
+.TP
+.BI /enhancedErrorMessages: n
+Control printing of enhanced error messages.
+Accepted values for\ \fIn\fP are:
+.RS
+.TP
+.B 0
+(default) Do not print enhanced error messages.
+.TP
+.B 1
+Print Z3 error model enhanced error messages.
+.RE
+.TP
+.BI /loopUnroll: n
+Unroll loops, following up to
+.I n
+back edges (and then some).
+.TP
+.BI /mv: file
+Save the model in BVD format to the specified file.
+.TP
+.B /noResolve
+Parse only.
+.TP
+.B /noTypecheck
+Parse and resolve only.
+.TP
+.B /overlookTypeErrors
+Skip any implementation with resolution or type checking errors.
+.TP
+.BI /print: file
+Print Boogie program to the specified file after parsing it.
+Specify
+.B \%/print:\-
+to print to standard output.
+.TP
+.BI /printCFG: prefix
+Print the control flow graph of each implementation in
+.BR dot (1)
+format to files named
+.IR prefix . procedurename .dot.
+.TP
+.B /printDesugared
+With
+.BR /print ,
+desugar calls.
+.TP
+.BI /printModel: n
+Control printing of Z3's error model.
+Accepted values for\ \fIn\fP are:
+.RS
+.TP
+.B 0
+(default) Do not print Z3's error model.
+.TP
+.B 1
+Print Z3's error model.
+.TP
+.B 2
+Print Z3's error model and reverse mappings.
+.TP
+.B 3
+Print Z3's error model in a more human-readable way.
+.RE
+.TP
+.BI /printModelToFile: file
+With
+.BR /print ,
+print Z3's error model to
+.I file
+instead of standard output.
+.TP
+.B /printUnstructured
+With
+.BR /print ,
+desugar all structured statements.
+.TP
+.B /printWithUniqueIds
+Print augmented information that uniquely identifies variables.
+.TP
+.BI /proc: p
+Limit which procedures to check.
+.TP
+.B /soundLoopUnrolling
+Enable sound loop unrolling.
+.SS "Inference options"
+.TP
+.B /checkInfer
+Instrument inferred invariants as asserts to be checked by the theorem prover.
+.TP
+.B /contractInfer
+Perform procedure contract inference.
+.TP
+\fB/infer\fP[:\fIdomains\/\fP]
+Use abstract interpretation to infer invariants.
+.I domains
+may be any of the following:
+.RS
+.TP
+.B c
+constant propagation
+.TP
+.B d
+dynamic type
+.TP
+.B i
+intervals
+.TP
+.B j
+stronger intervals (cannot be combined with other domains)
+.TP
+.B n
+nullness
+.TP
+.B p
+polyhedra for linear inequalities
+.TP
+.B t
+trivial bottom/top lattice (cannot be combined with other domains)
+.RE
+.IP ""
+You may also specify the following options as pseudo-domains:
+.RS
+.TP
+.B s
+debug statistics
+.TP
+.BR 0 .\|.\|.\| 9
+number of iterations before applying a widen (default: 0)
+.RE
+.IP ""
+The default is
+.BR /infer:i .
+With
+.B /infer
+(and no
+.IR domains ),
+all domains will be used.
+.TP
+.BI /instrumentInfer: flag
+Control when inferred invariants are instrumented.
+Accepted values
+for\ \fIflag\fP are:
+.RS
+.TP
+.B h
+(default) Instrument inferred invariants only at the beginning of loop headers.
+.TP
+.B e
+Instrument inferred invariants at the beginning and end of every block.
+This mode is intended for use in debugging abstract domains.
+.RE
+.TP
+.B /noinfer
+Turn off the default inference, and override any previous
+.B /infer
+flags.
+.TP
+.B /printInstrumented
+Print Boogie program after it has been instrumented with invariants.
+.SS "Debugging and tracing options"
+.TP
+\fB/break\fP
+Launch and break into the debugger.
+.TP
+\fB/log\fP[:\fImethod\/\fP]
+Print debug output during translation.
+.TP
+\fB/trace\fP
+Blurt out various debug trace information.  Implies
+.BR /tracePOs .
+.TP
+.B /tracePOs
+Output information about the number of proof obligations.
+.TP
+.B /traceTimes
+Output timing information at certain points in the pipeline.
+.SS "Verification condition generation options"
+.TP
+.B /alwaysAssumeFreeLoopInvariants
+Include free loop invariants as assumptions in checking contexts.
+Usually, a free loop invariant (or assume statement in that position) is ignored in checking contexts (like other free things).
+.TP
+.B /causalImplies
+Translate Boogie's
+.B A\ ==>\ B
+into prover's
+.BR "A\ ==>\ A\ &&\ B" .
+.TP
+.BI /coalesceBlocks: n
+Control when to coalesce blocks.
+Accepted values for\ \fIn\fP are:
+.RS
+.TP
+.B 0
+Do not coalesce blocks.
+.TP
+.B 1
+(default) Coalesce blocks.
+.RE
+.TP
+.BI /inferLeastForUnsat: prefix
+Infer the least number of constants (whose names are prefixed by
+.IR prefix )
+that need to be set to true for the program to be correct.
+Implies
+.BR /stratifiedInline:1 .
+.TP
+.BI /inline: strategy
+Use the specified inlining strategy for procedures with the
+.B :inline
+attribute.
+Accepted strategies are
+.BR none ,
+.B assume
+(the default),
+.BR assert ,
+and
+.BR spec .
+.TP
+.B /lazyInline:1
+Use the lazy inlining algorithm.
+.TP
+.BI /liveVariableAnalysis: n
+Control when and how to perform live variable analysis.
+Accepted values for\ \fIn\fP are:
+.RS
+.TP
+.B 0
+Do not perform live variable analysis.
+.TP
+.B 1
+(default) Perform live variable analysis.
+.TP
+.B 2
+Perform interprocedural live variable analysis.
+.RE
+.TP
+.B /monomorphize
+Do not abstract map types in the encoding.
+This is an experimental feature which will not do the right thing if the program uses polymorphism.
+.TP
+.B /noVerify
+Skip verification condition generation and invocation of the theorem prover.
+.TP
+.B /printInlined
+Print the implementation after inlining calls to procedures with the
+.B :inline
+attribute.
+.TP
+.BI /recursionBound: n
+Set the recursion bound for stratified inlining to
+.IR n .
+By default,
+.I n
+is 500.
+.TP
+.B /reflectAdd
+In the verification condition, generate an auxiliary symbol, elsewhere defined to be
+.BR + ,
+instead of
+.BR + .
+.TP
+.BI /removeEmptyBlocks: n
+Control whether to remove empty blocks during verification condition generation.
+Accepted values for\ \fIn\fP are:
+.RS
+.TP
+.B 0
+Do not remove empty blocks.
+.TP
+.B 1
+(default) Remove empty blocks.
+.RE
+.TP
+.B /smoke
+Run the soundness smoke test: try to stick
+.B assert false;
+in some places in the BPL and see if we can still prove it.
+.TP
+.BI /smokeTimeout: n
+Set the timeout, in seconds, for a single theorem prover invocation during the smoke test.
+By default,
+.I n
+is 10.
+.TP
+.B /stratifiedInline:1
+Use the stratified inlining algorithm.
+.TP
+.BI /subsumption: n
+Control when subsumption is applied to asserted conditions.
+Accepted values for\ \fIn\fP are:
+.RS
+.TP
+.B 0
+Never apply subsumption.
+.TP
+.B 1
+Do not apply subsumption for quantifiers.
+.TP
+.B 2
+(default) Always apply subsumption.
+.RE
+.TP
+.B /traceVerify
+Print debug output during verification condition generation.
+.TP
+.BI /typeEncoding: method
+Control how to encode types when sending the verification condition to the the theorem prover.
+Allowed methods are:
+.RS
+.TP
+.B a
+arguments
+.TP
+.B m
+monomorphic
+.TP
+.B n
+none (unsound)
+.TP
+.B p
+(default) predicates
+.RE
+.TP
+.BI /vc: variety
+Specify the verification condition variety.
+Accepted varieties are:
+.RS
+.TP
+.B b
+flat block
+.TP
+.B d
+(default) DAG
+.TP
+.B doomed
+doomed
+.TP
+.B l
+local
+.TP
+.B m
+nested block reach
+.TP
+.B n
+nested block
+.TP
+.B r
+flat block reach
+.TP
+.B s
+structured
+.RE
+.SS "Verification condition splitting"
+.TP
+.BI /vcsCores: n
+Try to verify
+.I n
+verification conditions at once.
+Defaults to 1.
+.TP
+.B /vcsDumpSplits
+For the
+.IR n th
+split, dump
+.IR split . n .dot
+and
+.IR split . n .bpl.
+Note that this affects error reporting.
+.TP
+.BI /vcsFinalAssertTimeout: n
+Set the timeout, in seconds, for the single last assertion in keep-going mode.
+By default,
+.I n
+is 30.
+.TP
+.BI /vcsKeepGoingTimeout: n
+Set the timeout, in seconds, for a single theorem prover invocation in keep-going mode, except for the final single-assertion case.
+By default,
+.I n
+is 1.
+.TP
+.BI /vcsLoad: f
+Like \fB/vcsCores\fP:\fIn\fP, where
+.I n
+is the machine's processor count multiplied by
+.I f
+and rounded to the nearest integer.
+.I f
+must be in the range [0.0, 3.0].
+This will never set
+.I n
+less than 1.
+.TP
+.BI /vcsMaxCost: f
+Verification conditions will not be split unless the cost of a verification condition exceeds
+.IR f .
+.I f
+defaults to 2000.0.  This does
+.I not
+apply in the keep-going mode after the first round of splitting.
+.TP
+.BI /vcsMaxKeepGoingSplits: n
+If
+.I n
+is set to more than 1, this activates keep-going mode, where after the first round of splitting, verification conditions that time out are split into
+.I n
+pieces and retried until either proving them is successful or there is only one assertion on a single path and it times out.
+(In such a case,
+.B boogie
+reports an error for that assertion).
+By default,
+.I n
+is 1 (that is, keep-going mode is disabled).
+.TP
+.BI /vcsMaxSplits: n
+Set the maximal number of verification conditions generated per method.
+In keep-going mode, this only applies to the first round.
+By default,
+.I n
+is 1.
+.TP
+\fB/vcsPathCostMult\fP:\fIf1\fP, \fB/vcsAssumeMult\fP:\fIf2\fP
+Controls the cost of a block.
+Block cost is computed according to the formula
+.IP ""
+.in +4n
+(\fIassert-cost\fP \[pl] \fIf2\fP \[mu] \fIassume-cost\fP) \[mu] (1 \[pl] \fIf1\fP \[mu] \fIentering-paths\fP)
+.in
+.IP ""
+where
+.I f1
+defaults to\ 1.0 and
+.I f2
+defaults to\ 0.01.
+The cost of a single assertion or assumption is always 1.0.
+.TP
+.BI /vcsPathJoinMult: f
+Sets a scale factor which
+.B boogie
+will multiply by the number of paths in a block if more than one path join at a block.
+This is intended to reflect the fact that the prover will learn something on one path before proceeding to the next.
+By default,
+.I f
+is 0.8.
+.TP
+.BI /vcsPathSplitMult:f
+If the best path split of a verification condition of cost
+.I A
+is into verification conditions of cost \fIB\fP\ and\ \fIC\fP, then the split is applied if \fIA\fP \[>=] \fIf\fP \[mu] (\fIB\fP \[pl] \fIC\fP).
+Otherwise, assertion splitting will be applied.
+By default,
+.I f
+is 0.5 (that is, always do path splitting if possible).
+Increase
+.I f
+to do less path splitting and more assertion splitting.
+.SS "Prover options"
+.TP
+.BI /errorLimit: n
+Limit the number of errors produced for each procedure.
+By default,
+.I n
+is 5, but some provers may only support 1.
+.TP
+.BI /errorTrace: n
+Control whether or not trace labels appear in the error output.
+Accepted values for\ \fIn\fP are:
+.RS
+.TP
+.B 0
+Print no trace labels in the error output.
+.TP
+.B 1
+(default) Print useful trace labels in error output.
+.TP
+.B 2
+Print all trace labels in error output.
+.RE
+.TP
+.BI /logPrefix: prefix
+Define the expansion of the macro
+.BR @PREFIX@ .
+.TP
+\fB/p\fP:\fIkey\fP[:\fIvalue\/\fP], \fB/proverOpt\fP:\fIkey\fP[:\fIvalue\/\fP]
+Provide a prover-specific option.
+.TP
+\fB/platform\fP:\fIptype\fP,\fIlocation\fP
+Set the platform type and location.
+.I ptype
+may be
+.BR v11 ,
+.BR v2 ,
+or
+.BR cli1 ,
+and
+.I location
+should be the platform libraries directory.
+.TP
+.BI /prover: p
+Use theorem prover
+.IR p .
+.I p
+may be a full path to a prover DLL, or it may be one of the following standard provers:
+.RS
+.TP
+.B ContractInference
+.TP
+.B Simplify
+This implies
+.B /vc:n
+and
+.BR /vcBrackets:1 .
+.TP
+.B SMTLib
+(default) Use the SMTLib2 format, and call Z3.
+.TP
+.B Z3
+Z3 with the Simplify format.
+.TP
+.B Z3api
+Z3 with the managed (CLI) API.
+.RE
+.TP
+.BI /proverLog: file
+Log input for the theorem prover.
+.IP ""
+In addition to the standard file name macros,
+.I file
+can use the
+.B @PROC@
+macro, which causes
+.B boogie
+to generate one prover log file per verification condition, expanding
+.B @PROC@
+to the name of the procedure that the verification condition is for.
+.TP
+.B /proverLogAppend
+Append (do not overwrite) the specified prover log file.
+.TP
+.BI /proverMemorylimit: n
+Limit the prover to
+.I n
+megabytes of virtual memory before forcing it to restart.
+.I n
+defaults to 100.
+.TP
+.BI /proverShutdownLimit n
+Set the time, in seconds, between closing the stream to the prover and killing the prover process.
+.I n
+defaults to 0.
+.TP
+.BI /proverWarnings: n
+Control warning output from the prover.
+Accepted values for\ \fIn\fP are:
+.RS
+.TP
+.B 0
+(default) Don't print warning output from the prover.
+.TP
+.B 1
+Print warnings to standard output.
+.TP
+.B 2
+Print warnings to standard error.
+.RE
+.TP
+.B /restartProver
+Restart the prover after each query.
+.TP
+.BI /timeLimit: n
+Limit the number of seconds spent trying to verify each procedure.
+.TP
+.BI /vcBrackets: n
+Control whether or not odd-charactered identifier names will be bracketed with pipe characters (\(aq|\(aq).
+Accepted values for\ \fIn\fP are:
+.RS
+.TP
+.B 0
+(default) Do not bracket odd-charactered identifier names.
+.TP
+.B 1
+Bracket odd-charactered identifier names.
+.RE
+.SS "Prover options (Simplify)"
+.TP
+.BI /simplifyMatchDepth: n
+Set Simplify's matching depth limit.
+.SS "Prover options (Z3)"
+.TP
+.B /useArrayTheory
+Use Z3's native array theory, as opposed to axioms.
+Implies
+.BR /monomorphize .
+.TP
+.B /useSmtOutputFormat
+Output a model in SMTLib2 format.
+.TP
+.BI /z3exe: path
+Set the path to the Z3 executable.
+On Debian systems, this defaults to
+.BR /usr/bin/z3 .
+.TP
+.BR /z3lets: n
+Configure use of
+.BR LET s
+in Z3.
+Accepted values for\ \fIn\fP are:
+.RS
+.TP
+.B 0
+Do not use
+.BR LET s.
+.TP
+.B 1
+Use only
+.BR "LET TERM" .
+.TP
+.B 2
+Use only
+.BR "LET FORMULA" .
+.TP
+.B 3
+(default) Use any
+.BR LET .
+.RE
+.TP
+.B /z3multipleErrors
+Report multiple counterexamples for each error.
+.TP
+.BI /z3opt: option
+Set an additional Z3 option.
+.TP
+.B /z3types
+Generate a multi-sorted verification condition that makes use of Z3 types.
+.SH SEE ALSO
+.BR dot (1)
+.SH COPYRIGHT
+Boogie is copyright \(co 2003-2015 Microsoft Corporation and licensed under the Microsoft Public License <https://msdn.microsoft.com/en-us/library/ff647676.aspx>.
+
+This manual page is copyright \(co 2013, 2015-2016 Benjamin Barenblat and licensed under the Apache License, Version 2.0.
