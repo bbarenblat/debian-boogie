@@ -1,0 +1,4 @@
+# Upstream does not cut releases at this point – only Git snapshots.
+# Consequently, constructing a suitable watch file is impossible.
+#
+#  -- Benjamin Barenblat <bbaren@mit.edu>  Tue 11 Aug 2015 19:27:24 -0400
