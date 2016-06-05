@@ -356,7 +356,7 @@ namespace Microsoft.Boogie {
       hasOutput = false;
       outputExn = null;
       this.handler = handler;
-
+      
       thmProver.Reset(gen);
       SetTimeout();
       proverStart = DateTime.UtcNow;
@@ -386,6 +386,7 @@ namespace Microsoft.Boogie {
   // -----------------------------------------------------------------------------------------------
 
   public abstract class ProverInterface {
+
     public static ProverInterface CreateProver(Program prog, string/*?*/ logFilePath, bool appendLogFile, int timeout, int taskID = -1) {
       Contract.Requires(prog != null);
 
@@ -452,6 +453,10 @@ namespace Microsoft.Boogie {
       Undetermined,
       Bounded
     }
+
+    public readonly ISet<VCExprVar> NamedAssumes = new HashSet<VCExprVar>();
+    public ISet<string> UsedNamedAssumes { get; protected set; }
+
     public class ErrorHandler {
       // Used in CheckOutcomeCore
       public virtual int StartingProcId()
@@ -542,7 +547,7 @@ namespace Microsoft.Boogie {
     }
 
     // (assert vc)
-    public virtual void Assert(VCExpr vc, bool polarity)
+    public virtual void Assert(VCExpr vc, bool polarity, bool isSoft = false, int weight = 1)
     {
         throw new NotImplementedException();
     }
