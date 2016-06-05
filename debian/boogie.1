@@ -12,7 +12,7 @@
 .\" License for the specific language governing permissions and limitations
 .\" under the License.
 .pc
-.TH boogie 1 "2016-04-01" "Git snapshot 97628c" Boogie
+.TH boogie 1 "2016-06-05" "Git snapshot 4108246" Boogie
 .SH NAME
 boogie \- compiler for the Boogie programming language
 .SH SYNOPSIS
@@ -152,10 +152,23 @@ desugar all structured statements.
 Print augmented information that uniquely identifies variables.
 .TP
 .BI /proc: p
-Limit which procedures to check.
+Only check procedures matched by the pattern
+.IR p .
+This option may be specified multiple times to match multiple patterns.
+The pattern
+.I p
+matches the whole procedure name (e.g., a pattern "foo" will only match a procedure called "foo", not one called "fooBar").
+The pattern
+.I p
+may contain * wildcards which match any character zero or more times.
+For example, the pattern "ab*d" would match "abd", "abcd", and "abccd", but not "Aabd" or "abdD".
+The pattern "*ab*d*" would match "abd", "abcd", "abccd", "Abd", and "abdD".
 .TP
 .B /soundLoopUnrolling
 Enable sound loop unrolling.
+.TP
+.B /useBaseNameForFileName
+When parsing, use the base name of the file for tokens instead of the path supplied on the command line.
 .SS "Inference options"
 .TP
 .B /checkInfer
@@ -272,6 +285,9 @@ Do not coalesce blocks.
 (default) Coalesce blocks.
 .RE
 .TP
+.BI /fixedPointEngine: engine
+Use the specified fixed point engine for inference.
+.TP
 .BI /inferLeastForUnsat: prefix
 Infer the least number of constants (whose names are prefixed by
 .IR prefix )
@@ -375,7 +391,7 @@ Do not apply subsumption for quantifiers.
 (default) Always apply subsumption.
 .RE
 .TP
-.B /traceVerify
+.B /traceverify
 Print debug output during verification condition generation.
 .TP
 .BI /typeEncoding: method
@@ -424,6 +440,35 @@ flat block reach
 .TP
 .B s
 structured
+.RE
+.TP
+.B /verifySeparately
+Verify each input program separately.
+.TP
+.BI /verifySnapshots: n
+Verify several program snapshots (named
+.IR filename .v0.bpl
+to
+.IR filename .vN.bpl),
+possibly using verification result caching.
+Accepted values for
+.I n
+are:
+.RS
+.TP
+.B 0
+(default) Do not use any verification result caching.
+.TP
+.B 1
+Use basic verification result caching.
+.TP
+.B 2
+Use advanced verification result caching.
+.TP
+.B 3
+Use advanced verification result caching, and report errors according to the new source locations for errors and their related locations (but not
+.B /errorTrace
+and CaptureState locations).
 .RE
 .SS "Verification condition splitting"
 .TP
