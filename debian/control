@@ -8,7 +8,7 @@ Build-Depends-Indep:
  cli-common-dev (>= 0.8),
  mono-devel (>= 2.4.2.3),
  mono-reference-assemblies-4.0,
-Standards-Version: 3.9.7
+Standards-Version: 3.9.8
 Homepage: http://research.microsoft.com/en-us/projects/boogie/
 
 Package: boogie
