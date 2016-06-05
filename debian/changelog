@@ -1,10 +1,10 @@
-boogie (2.3.0.61016+dfsg+2.gbp4108246-1) UNRELEASED; urgency=medium
+boogie (2.3.0.61016+dfsg+2.gbp4108246-1) unstable; urgency=medium
 
   ** SNAPSHOT build @41082463d783d6f8d8a5aaf69bf459b57bca6000 **
 
   * New snapshot for Dafny 1.9.7.
 
- -- Benjamin Barenblat <bbaren@mit.edu>  Sun, 05 Jun 2016 15:20:04 -0400
+ -- Benjamin Barenblat <bbaren@mit.edu>  Sun, 05 Jun 2016 16:02:41 -0400
 
 boogie (2.3.0.61016+dfsg+1.gbp64e8b3-1) unstable; urgency=medium
 
